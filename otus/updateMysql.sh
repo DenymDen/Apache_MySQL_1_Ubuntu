@@ -1,20 +1,19 @@
 #!/bin/bash
 
-# Получаем имя папки, в которой находится скрипт
-DB_NAME=$(basename $(dirname "$0"))
-
 # Создаем базу данных
-mysql -u root -p -e "CREATE DATABASE $DB_NAME"
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS otus;"
 
-# Получаем список файлов бэкапов
-BACKUP_FILES=$(find . -name "*.sql")
+# Получаем список файлов в папке
+FILES=$(find . -type f)
 
 # Восстанавливаем таблицы
-for FILE in $BACKUP_FILES; do
-  mysql -u root -p $DB_NAME < "$FILE"
+for FILE in $FILES; do
+  if [[ $FILE =~ .*\.sql$ ]]; then
+    mysql -u root -p otus < "$FILE"
+  fi
 done
 
-echo "Восстановление базы данных $DB_NAME завершено"
+echo "Восстановление базы данных otus завершено"
 
 
 
